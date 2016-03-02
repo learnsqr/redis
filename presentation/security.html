@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Redis Ready: Security - Learnsqr</title>
+
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
+		<meta name="author" content="Agustín F. Calderón M.">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="../assets/css/style.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../assets/vendor/reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		      
+        
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				
+				<section>
+                    <h1>
+                        <span class="mysql-color">Security & Encryption</span>
+                        
+                    </h1>
+                </section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Security<center>
+
+
+##<span style="color:red">Redis is designed to be accessed by trusted clients inside trusted environments</span>##
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Security 2<center>
+
+
+- Untrusted access to Redis should always be mediated by a layer implementing ACLs, 
+validating user input, and deciding what operations to perform against the Redis instance.
+- In general, Redis is not optimized for maximum security but for maximum performance and simplicity.
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Network security<center>
+
+
+- Access to the Redis port should be denied to everybody but trusted clients in the network
+- In virtualized Linux instance (Linode, EC2, ...), the Redis port should be firewalled to prevent access from the outside
+- Clients will still be able to access Redis using the loopback interface.
+- Bind Redis to a single interface
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Authentication security<center>
+
+
+- Redis does not try to implement Access Control.
+- Redis will refuse any query by unauthenticated clients.
+- A client can authenticate itself by sending the AUTH command followed by the password.
+- Password is clear text inside the redis.conf file
+- The AUTH command, like every other Redis command, is sent unencrypted
+
+
+</script>
+</section>
+
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Data Encryption <center>
+
+
+## <span style="color:red">Redis does not support encryption</span>##
+
+Note: 
+SSL proxy. Redis recommend spiped.
+
+</script>
+</section>
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Disabling of specific commands<center>
+
+
+- Rename them into an unguessable name
+- In the redis.conf <span class="zf-color">rename-command</span>
+- It is also possible to completely disable it
+
+```
+rename-command CONFIG b840fc02d524045429941cc15f59e41cb7be6c52
+rename-command CONFIG ""
+```
+
+</script>
+</section>
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Atack</center>
+
+- Insert data into Redis that triggers worst case algorithm complexity on data structures internals.
+- To prevent this specific attack, Redis uses a per-execution pseudo-random seed to the hash function
+
+Note: 
+or instance an attacker could supply, via a web form, a set of strings that is known to hash to the same bucket into a hash table in order to 
+turn the O(1) expected time (the average time) to the O(N) worst case, 
+consuming more CPU than expected, and ultimately causing a Denial of Service.
+
+</script>
+</section>
+</section>
+
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>String escaping and NoSQL injection</center>
+
+- The Redis protocol has no concept of string escaping
+- Is impossible under normal circumstances using a normal client library. 
+- The protocol uses prefixed-length strings and is completely binary safe.
+
+</script>
+</section>
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Code security</center>
+
+- Redis does not requires root privileges to run.
+- Run it as an unprivileged redis user that is only used for this purpose.
+- With CONFIG command user is able to change the working dir and the name of the dump file
+
+</script>
+</section>
+</section>
+
+<!-- *************** SLIDES END *********************** -->
+            
+            
+     
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="../assets/vendor/reveal.js/lib/js/head.min.js"></script>
+		<script src="../assets/vendor/reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../assets/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../assets/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

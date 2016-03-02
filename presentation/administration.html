@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Redis Ready: Administration - Learnsqr</title>
+
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
+		<meta name="author" content="Agustín F. Calderón M.">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="../assets/css/style.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../assets/vendor/reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		      
+        
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				
+				<section>
+                    <h1>
+                        <span class="mysql-color">Administration.</span></br>
+                        <span class="zf-color">Hints</span>
+                    </h1>
+                </section>
+                
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Setup 1<center>
+
+
+- Deploying in Linux operating system. 
+- Make sure to set the Linux kernel overcommit memory setting to 1.
+- Make sure to disable Linux kernel feature transparent huge pages.
+- Make sure to setup some swap in your system (we suggest as much as swap as memory). 
+If Redis accidentally consumes too much memory, will crash for out of memory or the Linux kernel Out Of Memory killer will kill Redis
+- Set an explicit maxmemory option limit in your instance in order to make sure that the 
+instance will report errors instead of failing when the system memory limit is near to be reached.
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Setup 2<center>
+
+- In a very write-heavy application, while saving an RDB file on disk or rewriting the AOF (append only) log Redis may use up to 2 times the memory normally used. 
+- The additional memory used is proportional to the number of memory pages modified by writes during the saving process, 
+so it is often proportional to the number of keys (or aggregate types items) touched during this time. 
+- Make sure to size your memory accordingly.
+ 
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Setup 3<center>
+
+
+- Use daemonize no when run under daemontools (/service).
+- Even if you have persistence disabled, Redis will need to perform RDB saves if you use replication, unless you use the new diskless replication feature.
+- If you are using replication, make sure that either your master has persistence enabled., or that it does not automatically restarts on crashes
+- By default Redis does not require any authentication and listens to all the network interfaces. 
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Setup on EC2<center>
+
+
+- Use HVM based instances, not PV based instances.
+- Don't use old instances families, for example: use m3.medium with HVM instead of m1.medium with PV.
+- The use of Redis persistence with EC2 EBS volumes needs to be handled with care since sometimes EBS volumes have high latency characteristics.
+- You may want to try the new diskless replication (currently experimental) if you have issues when slaves are synchronizing with the master.
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Upgrading<center>
+
+Without downtime
+- Redis is designed to be a very long running process in your server. 
+- For instance many configuration options can be modified without any kind of restart using the CONFIG SET command.
+- Iis even possible to switch from AOF to RDB snapshots persistence without restarting Redis. 
+- Check the output of the CONFIG GET * command for more information.
+
+</script>
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Restarting<center>
+
+Restart required
+- To upgrade the Redis process to a newer version
+- Change configuration parameter that is currently not supported by the CONFIG command.
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Without downtime<center>
+
+Without downtime
+- Setup your new Redis instance as a slave for your current Redis instance. 
+- Different server, or a server that has enough RAM 
+- If you use a single server, the slave must started in a different port.
+- Wait for the replication initial synchronization to complete (check the slave log file).
+- Make sure using INFO that there are the same number of keys in the master and in the slave. 
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Without downtime 2<center>
+
+- Check with redis-cli that the slave is working as you wish and is replying to your commands.
+- Allow writes to the slave using CONFIG SET slave-read-only no
+- Configure all your clients in order to use the new instance (that is, the slave).
+ -Once you are sure that the master is no longer receiving any query (you can check this with the MONITOR command), 
+elect the slave to master using the SLAVEOF NO ONE command, and shut down your master.
+
+</script>
+</section>
+
+</section>
+
+<!-- *************** SLIDES REFERENCES *********************** -->
+<section data-markdown>
+<script type="text/template">
+
+</script>
+</section>
+<!-- *************** SLIDES END *********************** -->
+            
+            
+     
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="../assets/vendor/reveal.js/lib/js/head.min.js"></script>
+		<script src="../assets/vendor/reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../assets/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../assets/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

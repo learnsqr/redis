@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Redis Ready: Recommended - Learnsqr</title>
+
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
+		<meta name="author" content="Agustín F. Calderón M.">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="../assets/css/style.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../assets/vendor/reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		      
+        
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				
+				<section>
+                    <h1>
+                        <span class="mysql-color">Benchmarks.</span><br/>
+                        <span class="zf-color">Centos 7 / Centos 6.5</span>
+                    </h1>
+                </section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Links 1</center>
+
+- 5 Tips for Running Redis over AWS
+https://redislabs.com/blog/5-tips-for-running-redis-over-aws
+
+- Running Redis in production
+http://shokunin.co/blog/2014/11/11/operational_redis.html
+
+- Thoughts on Redis
+http://blog.kennejima.com/post/1226487020/thoughts-on-redis
+
+- Operation of the virtual memory (VM)
+https://www.kernel.org/doc/Documentation/sysctl/vm.txt
+
+- CentOS 7 tuned profile for redis
+http://ospi.netcode.fi/blog/centos-7-tuned-profile-for-redis.html
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Links 1</center>
+
+# Linux 
+- TCP Selective Acknowledgments (SACK)
+http://packetlife.net/blog/2010/jun/17/tcp-selective-acknowledgments-sack/
+https://www.frozentux.net/ipsysctl-tutorial/chunkyhtml/tcpvariables.html
+
+- Tuning TCP for High Bandwidth-Delay Networks
+http://www.kehlet.cx/articles/99.html
+
+- Coping with the TCP TIME-WAIT state on busy Linux servers
+http://vincent.bernat.im/en/blog/2014-tcp-time-wait-state-linux.html
+
+- Linux Tune Network Stack
+http://www.cyberciti.biz/faq/linux-tcp-tuning/
+
+- Overcommit handling modes
+https://www.kernel.org/doc/Documentation/vm/overcommit-accounting
+
+- How TCP backlog works in Linux
+http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html
+
+High Throughput Computing Administration Guide
+- https://computing.llnl.gov/linux/slurm/high_throughput.html
+
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Links 2</center>
+
+# Linux 
+
+Transparent Huge Pages and Alternative Memory Allocators
+- https://www.digitalocean.com/company/blog/transparent-huge-pages-and-alternative-memory-allocators/
+
+How to use, monitor, and disable transparent hugepages in Red Hat Enterprise Linux 6
+- https://access.redhat.com/solutions/46111
+
+Understanding Horizontal and Vertical Scaling
+- http://blakesmith.me/2012/12/08/understanding-horizontal-and-vertical-scaling.html
+
+How TCP backlog works in Linux
+- http://veithen.github.io/2014/01/01/how-tcp-backlog-works-in-linux.html
+
+TCP Variables
+- https://www.frozentux.net/ipsysctl-tutorial/chunkyhtml/tcpvariables.html
+
+Linux Broadband Tweaks
+- http://www.speedguide.net/articles/linux-tweaking-121
+
+Reduce TIME_WAIT socket connections
+- http://www.linuxbrigade.com/reduce-time_wait-socket-connections/
+
+
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Links 3</center>
+
+# Linux 
+
+Linux Network Tuning for 2013
+- http://www.nateware.com/linux-network-tuning-for-2013.html#.VtSjdIwwhGE
+
+Understanding Virtual Memory
+- http://www.redhat.com/magazine/001nov04/features/vm/
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Links 3</center>
+
+# Redis
+
+Redis Cookbook
+- http://www.rediscookbook.org/
+
+Redis vs Memcached
+- https://systoilet.wordpress.com/2010/08/09/redis-vs-memcached/
+
+Redis RDB Dump File Format
+- https://github.com/sripathikrishnan/redis-rdb-tools/wiki/Redis-RDB-Dump-File-Format
+
+A few things about Redis security
+- http://antirez.com/news/96
+
+</script>
+</section>
+
+</section>
+
+
+
+
+<!-- *************** SLIDES REFERENCES *********************** -->
+
+<section data-markdown>
+<script type="text/template">
+##Redis Services
+
+<span class="ref">  
+* <sup>1</sup> Redis Labs. __"Redis Quick Start."__ January 2016.  [Redis Quick Start](http://redis.io/topics/quickstart "Redis Quick Start.").
+<span>
+</script>
+</section>
+
+<!-- *************** SLIDES END *********************** -->
+<!-- *************** SLIDES END *********************** -->
+            
+            
+     
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="../assets/vendor/reveal.js/lib/js/head.min.js"></script>
+		<script src="../assets/vendor/reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../assets/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../assets/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

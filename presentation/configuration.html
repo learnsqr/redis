@@ -1,0 +1,577 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Redis Ready: Configuration - Learnsqr</title>
+
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
+		<meta name="author" content="Agustín F. Calderón M.">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="../assets/css/style.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../assets/vendor/reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		      
+        
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				
+				<section>
+                    <h1>
+                        <span class="mysql-color">Configuración.</span>
+                        <span class="zf-color">Variaciones</span>
+                    </h1>
+                </section>
+                
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+
+
+<section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Geralidades<center>
+
+- Sin configuraction: built-in default configuration
+- InLine: redis-server --daemonize yes
+- Tipicamente Configuración de Redis: <span class="zf-color">/etc/redis/redis.conf</span>
+
+</script>
+</section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration options<center>
+
+Unidades	
+- 1k => 1000 bytes
+- 1kb => 1024 bytes
+- 1m => 1000000 bytes
+- 1mb => 1024*1024 bytes
+- 1g => 1000000000 bytes
+- 1gb => 1024*1024*1024 bytes
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Get/Set Configuracion<center>
+
+- redis> CONFIG GET name
+- redis> CONFIG SET name value
+
+</script>
+</section>
+</section>
+
+
+
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuración básica Producción<center>
+
+
+
+- Configurar <span class="zf-color">daemonize</span> a _yes_ .
+- Configurar <span class="zf-color">pidfile</span> a /var/run/redis_6379.pid (acorde con el puerto).
+- Configurar <span class="zf-color">port</span> acorde con el puerto. Por defecto es 6379.
+- Configurar <span class="zf-color">loglevel</span>.
+- Configurar <span class="zf-color">logfile</span> a /var/log/redis_6379.log
+- Configurar <span class="zf-color">dir</span> a /var/redis/6379 (muy importante!)
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>En Producción<center>
+
+Instalación básica
+```
+sudo mkdir /etc/redis
+sudo mkdir /var/redis
+sudo cp utils/redis_init_script /etc/init.d/redis_6379
+sudo vi /etc/init.d/redis_6379 (check REDISPORT)
+sudo cp redis.conf /etc/redis/6379.conf
+sudo mkdir /var/redis/6379
+sudo vi /etc/redis/6379.conf
+```
+
+</script>
+</section>
+
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>En Producción<center>
+
+Start
+```
+/etc/init.d/redis_6379 start
+```
+
+Persist start
+```
+sudo ./install_server.sh 
+```
+
+Check status
+```
+service redis_6379 status
+```
+
+</script>
+</section>
+
+
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Optiones de Configuración: General<center>
+
+- Por defecto Redis no corre como daemon.
+- Cuando ejecuta como daemon, usa un pid file
+- Acepta conecciones en el puerto especificado
+- Si port 0 no escucha en ningun socket TCP.
+
+```
+daemonize VALUE [yes|no]
+pidfile /var/run/redis.pid
+port 6379
+```
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>General 2<center>
+
+- Por defecto Redis esta disponible en todas las interfaces
+- Redis no escucha por socket si no se especifica
+- Cerrar la coneccion para clientes idle a los N segundo
+- Mantenet la coneccion con envio de Ack cada N segundos (60 es el recomendado)
+- Nivel de log
+- Localizacion del log
+
+```
+bind 127.0.0.1
+unixsocket /tmp/redis.sock
+timeout 0
+tcp-keepalive 60
+loglevel notice
+logfile ""
+```
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>General 3<center>
+
+- Habilitar System logger
+- Configura el identificador del syslog
+- Confiigurar el facility del syslog
+- Cantidad de databases
+
+```
+syslog-enabled no
+syslog-ident redis
+syslog-facility local0
+databases 16
+```
+
+Note:
+- The information provided by the originator of a syslog message includes the facility code and the severity level.
+- A facility code is used to specify the type of program that is logging the message.
+- The meaning of severity levels other than emergency and debugging are relative to the application.
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>General 4<center>
+
+- TCP-backlog limite de la cola de conexiones entrantes.
+- Esta limitado por <span class="zf-color">somaxconn</span> y <span class="zf-color">tcp_max_syn_backlog</span>
+- Somaxconn: Limite de la cola para aceptar conecciones TCP (listen())
+- Tcp max syn backlog: 
+
+```
+tcp-backlog 511
+```
+
+</script>
+</section>
+</section>
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>TCP listen 1: somaxconn <center>
+
+- <span class="zf-color">somaxconn</span>: SOcket MAXimum CONnection Number 
+- Limita el tamaño de la cola para aceptar conecciones TCP listen().
+- Si no entra en la cola la conección es "dropped/ignored" 
+
+Ver:
+```
+cat /proc/sys/net/core/somaxconn
+sysctl net.core.somaxconn
+```
+
+Cambiar:
+```
+echo 65535 > /proc/sys/net/core/somaxconn
+sysctl -w net.core.somaxconn = 1024
+[----Persistente----]
+agregar net.core.somaxconn = 1024 a /etc/sysctl.conf
+[----Cargar----]
+sysctl -p
+```
+
+Note:
+- Definido en #include sys/socket.h
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>TCP listen 2: tcp_max_syn_backlog <center>
+
+- <span class="zf-color">tcp_max_syn_backlog</span>: Numero maximo de conexiones recurrentes recordadas
+- Debe ser mayor que somaxconn
+- <span class="zf-color">net.ipv4.tcp_syncookies</span> Envia syncookies al host cuando syn backlog queue se sobrepasa para un socket.
+- Tambien se usa para prevenir el ataque "syn flood attack".
+
+```
+sysctl net.ipv4.tcp_max_syn_backlog
+sysctl net.ipv4.tcp_syncookies
+[----Persistente----]
+agregar net.ipv4.tcp_max_syn_backlog = 2048 a /etc/sysctl.conf
+agregar net.ipv4.tcp_syncookies = 1 a /etc/sysctl.conf
+```
+
+Note:
+- Para ver la cola en SYN
+- netstat -ant | grep -c SYN_REC 
+- Syn flood attack: SYN, SYN-ACK, ACK. S corta la three-way handshake y se crea media conexion 
+haciendo que eventualmente el server se quede sin recursos
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>TCP Tunning 3 <center>
+
+- <span class="zf-color">net.ipv4.tcp_window_scaling</span> Habilita la ventada de red en LFP (Large Fat Pipes / Long Fat Networks)
+- <span class="zf-color">sysctl net.ipv4.tcp_timestamps</span> Habilita el uso de tcp_timestamps para calcular Round Trip Measurement.
+- <span class="zf-color">sysctl net.ipv4.tcp_sack</span> TCP Selective Acknowledgments, Habilitar SACK
+
+Verificar que estan enable 1
+```
+sysctl net.ipv4.tcp_window_scaling
+sysctl net.ipv4.tcp_timestamps
+sysctl net.ipv4.tcp_sack
+```
+
+Note:
+- tcp_window_scaling: tamaño de la ventana optimizado para el ancho de banda y el delay.
+- In LFP we experience heavy bandwidth loss due to the channels not being fully filled while waiting for ACK's for our previous TCP windows.
+- tcp_timestamps: Round Trip Measurement (RTT: ida y vuelta del ack): Usa el timestamp en lugar de retransmission timeout method para calcular Round Trip Measurement
+- tcp_sack: Cuando hay perdidas en la transmision this makes it possible to only retransmit specific parts of the TCP.  This means that if a certain 
+segment of a TCP window is not received, the receiver will not return a SACK for that segment. The sender will then know which packets where not 
+received by the receiver, and will hence retransmit that packet
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>TCP Tunning 4 <center>
+
+- <span class="zf-color">net.ipv4.tcp_congestion_control</span> Algoritmo de control de congestion. Para redes con high bandwidth delay (Large Fat Networks) NO usar reno.
+
+Verificar que es cubic (o htcp) 
+```
+sysctl net.ipv4.tcp_congestion_control
+```
+
+Note: 
+- Para ver los disponibles
+- sysctl net.ipv4.tcp_available_congestion_control
+- Para habilitar los que no estan
+- /sbin/modprobe tcp_htcp
+- /sbin/modprobe tcp_cubic
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>TCP Tunning 5 <center>
+
+- <span class="zf-color">net.ipv4.tcp_tw_recycle</span>  Habilita el reciclado repido de TIME-WAIT sockets.
+- <span class="zf-color">net.ipv4.tcp_tw_reuse</span> Habilita el reuso de TIME-WAIT sockets para conexiones nuevas, siempre que sea seguro
+desde el punto de vista del protocolo.
+- Se recomienda tcp_tw_reuse sobre tcp_tw_recycle
+
+```
+sysctl net.ipv4.tcp_tw_recycle
+sysctl net.ipv4.tcp_tw_reuse
+```
+
+Note:
+- Para ver cuantos estan en time-wait
+netstat -nat | awk '{print $6}' | sort | uniq -c | sort -n
+- Estados: Closed, Listen, Syn_Sent, Syn_Rcvd, Established, Fin_Wait_1, Fin_Wait_2, Closing, Time_Wait, Last_Ack, Close_Wait
+- Para protocolos no orientados a la conexión, como UDP, no presente.
+
+ESTABLISHED El socket tiene una conexión establecida
+SYN_SENT El socket está intentando iniciar una conexión
+SYN_RECV Una petición de conexión fue recibida por la red
+FIN_WAIT1 El socket está cerrado, y la conexión está finalizándose
+FIN_WAIT2 La conexión está cerrada, y el socket está esperando que finalice la conexión remota
+TIME_WAIT El socket está esperando después de cerrarse que concluyan los paquetes que siguen en la red
+CLOSED El socket no está siendo usado
+CLOSE_WAIT La conexión remota ha finalizado, y se espera que se cierre el socket
+LAST_ACK La conexión remota ha finalizado, y se espera que se cierre el socket. Esperando el acknowledgement.
+LISTEN El socket está esperando posibles conexiones entrantes
+CLOSING Ambos sockets han finalizado pero aún no fueron enviados todos los datos
+UNKNOWN El estado del socket no se conoce
+DELETE_TCB Se está eliminando el búfer del control de transmisión (TCB) para la conexión TCP.
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>TCP Tunning 6 <center>
+
+- <span class="zf-color">rmem_default</span> Memoria max de ventana de recibo.
+- <span class="zf-color">wmem_default</span> Memoria max de ventana de envio.
+- Incrementar estos valores permite enviar mas datos sin ACK
+
+```
+sysctl net.core.rmem_default
+sysctl net.core.rmem_max
+sysctl net.core.wmem_default
+sysctl net.core.wmem_max
+
+```
+
+Note:
+- Para tunning estos valores deben estar en 12MB (default 128K)
+
+
+</script>
+</section>
+
+</section>
+
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>VirtualMemory Tunning: overcommit <center>
+
+- <span class="zf-color">vm.overcommit_memory</span> Desabilitado, el sistema verifica que se tenga suficiente memoria para hacer backup del espacio virtual, 
+habilitado asume que hay memoria, y utiliza swap a disco.
+
+```
+sysctl vm.overcommit_memory
+```
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>VirtualMemory Tunning 2: swappiness <center>
+
+- <span class="zf-color">vm.swappiness</span> Controla el grado en el que el sistema hace swap a disco.
+- Un valor bajo previene el swap a disco 
+
+```
+sysctl vm.swappiness
+```
+
+Note: 
+- Swappiness value of 10. 
+- Swappiness: Cada cuanto se utiliza el archivo de intercambio (swap file)
+- Swappiness = 0 no se escribe en disco (run out of memory problems)
+- Swappiness = 10/15 El archivo de intercambio se utiliza cuando la RAM este entre el 80  / 90 de uso
+- Calcular con free -m (total) / 100 = A ; A * 10
+- Cuando 10% 395MB queden de ram, se empieza a uttilizar swapiness
+- Con Swappiness se producen bloqueos por operaciones de I/O al disco
+
+Configurar segun Formula
+- cat /proc/sys/vm/swappiness 
+- free -m
+- sysctl vm.swappiness=10
+
+
+
+</script>
+</section>
+
+
+</section>
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Max files: file-max <center>
+
+- <span class="zf-color">file-max</span> Número máximo de archivos abiertos
+
+```
+sysctl fs.file-max
+[----user----]
+ulimit -n
+ulimit -n 4096
+```
+
+Note:
+-Si el problema se mantiene, y los numero se parece, aumentar file-max
+cat /proc/sys/fs/file-max
+cat /proc/sys/fs/file-nr
+
+</script>
+</section>
+
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Hight performance: transparent huge pages<center>
+
+- Page: memoria en chunks de hasta 4kb. 1GB/4kb: 262,144 pages
+- Page Table Entry consume 8bytes, (2MB = 262144 * 8) para buscar.
+- Huge pages: 2MB or 1GB 
+- THP: Usa HP sin modificación el software.
+- Desabilitar	
+
+```
+grep -i HugePages_Total /proc/meminfo 
+cat /sys/kernel/mm/transparent_hugepage/enabled
+echo never >/sys/kernel/mm/transparent_hugepage/enabled
+```
+
+Note: 
+https://wiki.debian.org/Hugepages
+
+</script>
+</section>
+
+
+
+</section>
+
+<!-- *************** SLIDES REFERENCES *********************** -->
+
+<section data-markdown>
+<script type="text/template">
+##Redis Services
+
+<span class="ref">  
+* <sup>1</sup> Redis Labs. __"Redis Quick Start."__ January 2016.  [Redis Quick Start](http://redis.io/topics/quickstart "Redis Quick Start.").
+<span>
+</script>
+</section>
+
+<!-- *************** SLIDES END *********************** -->
+<!-- *************** SLIDES END *********************** -->
+            
+            
+     
+
+
+
+
+			</div>
+
+		</div>
+
+
+
+
+		<script src="../assets/vendor/reveal.js/lib/js/head.min.js"></script>
+		<script src="../assets/vendor/reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../assets/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../assets/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

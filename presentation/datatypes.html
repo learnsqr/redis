@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Redis Ready: Datatype - Learnsqr</title>
+
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
+		<meta name="author" content="Agustín F. Calderón M.">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="../assets/css/style.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../assets/vendor/reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		      
+        
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				
+				<section>
+                    <h1>
+                        <span class="mysql-color">Data types</span></br>
+                        <span class="zf-color">5 datatypes</span>
+                    </h1>
+                </section>
+                
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Data types<center>
+
+<img
+                         src="slides/datatypes/redis-data.png"
+                         alt="PHP" border="0"
+                         height="500px"
+                         style="margin-bottom: -60px; "
+                     />  
+
+</script>
+</section>
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Strings<center>
+
+- Most basic kind of Redis value
+- Binary safe - can contain any kind of data
+- Max 512 Megabytes in length
+- Can be used as atomic counters using commands in the
+<span class="zf-color">INCR</span> family  
+<span class="zf-color">APPEND</span> – Append a value to a key  
+<span class="zf-color">GET</span> – Get the value of a key  
+<span class="zf-color">SET</span> – Set the string value of a key  
+<span class="zf-color">MGET</span> – Get the values of all the given keys MSET – Set multiple keys to multiple values  
+
+</script>
+</section>
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Lists<center>
+
+Lists
+- Lists of strings, sorted by insertion order
+- Add elements to a Redis List pushing new elements on the
+head (on the left) or on the tail (on the right) of the list  
+<span class="zf-color">LSET</span> Set the value of an element in a list by its index  
+<span class="zf-color">LLEN</span> Get the length of a list  
+<span class="zf-color">LREM</span> Remove elements from a list  
+<span class="zf-color">LINSERT</span> Insert an element before or after another element in a list  
+<span class="zf-color">LRANGE</span> Get a range of elements from a list LPOP – Remove and get the first element in a list RPOP – Remove and get the last element in a list  
+
+</script>
+</section>
+
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Sets<center>
+
+- Redis Sets are an unordered collection of Strings. 
+- You can track unique things using Redis Sets.    
+<span class="zf-color">SADD</span> Add one or more members to a set  
+<span class="zf-color">SISMEMBER</span> Determine if a given value is a member of a set SMEMBERS – Get all the members in a set  
+<span class="zf-color">SPOP</span> Remove and return a random member from a set SRANDMEMBER – Get one or multiple random members from a set  
+<span class="zf-color">SREM</span> Remove one or more members from a set  
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Hashes<center>
+
+
+- Map between string fields and string values
+- Every hash can store more than 4 billion field-value pairs.  
+<span class="zf-color">HSET</span> Set the string value of a hash field  
+<span class="zf-color">HGET</span> Get the value of a hash field  
+<span class="zf-color">HMGET</span> Get the values of all the given hash fields   
+<span class="zf-color">HMSET</span> Set multiple hash fields to multiple values   
+<span class="zf-color">HLEN</span> Get the number of fields in a hash  
+<span class="zf-color">HKEYS</span> Get all the fields in a hash  
+<span class="zf-color">HGETALL</span> Get all the fields and values in a hash  
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Sorted Sets<center>
+
+- Every member of a Sorted Set is associated with score, that is used in order to take the sorted set ordered, from the smallest to the greatest score
+- You can do a lot of tasks with great performance that are really hard to model in other kind of databases
+- Probably the most advanced Redis data type  
+<span class="zf-color">ZADD</span> Add one or more members to a sorted set, or update its score if it already exists  
+<span class="zf-color">ZREM</span> Remove one or more members from a sorted set   
+<span class="zf-color">ZRANGE</span> Return a range of members in a sorted set, by index   
+<span class="zf-color">ZINCRBY</span> Increment the score of a member in a sorted set   
+</script>
+</section>
+
+<!-- *************** SLIDES REFERENCES *********************** -->
+<section data-markdown>
+<script type="text/template">
+
+</script>
+</section>
+<!-- *************** SLIDES END *********************** -->
+            
+            
+     
+
+
+
+
+			</div>
+
+		</div>
+
+		<script src="../assets/vendor/reveal.js/lib/js/head.min.js"></script>
+		<script src="../assets/vendor/reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../assets/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../assets/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Redis Ready: Replication - Learnsqr</title>
+
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
+		<meta name="author" content="Agustín F. Calderón M.">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="../assets/css/style.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../assets/vendor/reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		      
+        
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				
+				<section>
+                    <h1>
+                        <span class="mysql-color">Replication.</span>
+                        <span class="zf-color">Master/Slave</span>
+                    </h1>
+                </section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Caracteristicas<center>
+
+- Redis usa replicación asincrona.
+- Can force slavery, or configure a master to stop accepting writes
+if it appears to be not connected with at least a given number of slaves.
+- A master can have multiple slaves
+- Slaves are able to accept connections from other slaves in a graph-like structure
+- Redis replication is non-blocking on the master side
+- Replication is also non-blocking on the slave side 
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Caracteristicas 2<center>
+
+- Replication can be used both for scalability (on heavy read apps) or simply for data redundancy
+- It is possible to use replication to avoid the cost of having the master write the full dataset to disk
+- persistence turned on in the master or avoid restarting automatically.
+- Unfortunately, Redis replication doesn’t yet provide automated failover.
+- Redis slaves are able to perform a partial resynchronization with the 
+master if the replication link is lost for a relatively small amount of time.
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Safty of replication<center>
+
+- It is strongly advised to have persistence turned on in the master
+- If not possible, instances should be configured to avoid restarting automatically.
+	- We have a setup with node A acting as master, with persistence turned down
+	- Nodes B and C replicating from node A.
+	- A crashes, however it has some auto-restart system
+	- Since persistence is turned off, the node restarts with an empty data set.
+	- Nodes B and C will replicate from A
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Partial resynchronization<center>
+
+- This works by creating an in-memory backlog of the replication stream on the master side. 
+- The master and all the slaves agree on a replication offset and a master run id, so when the 
+link goes down, the slave will reconnect and ask the master to continue the replication.
+- If fail full resynchronization is needed.
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>How Redis replication works<center>
+
+- The master then starts background saving, and starts to buffer all new commands 
+received that will modify the dataset
+- When the background saving is complete, the master transfers the database file to the slave.
+- The slave saves it on disk, and then loads it into memory
+- Then the master will then send to the slave all buffered commands.
+
+
+
+</script>
+</section>
+</section>
+
+<section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Options<center>
+
+- <span class="zf-color">slaveof </span>Add to the slave configuration file
+- If <span class="zf-color">requirepass</span> is enable use <span class="zf-color">masterauth</span>
+- <span class="zf-color">slave-serve-stale-data</span> Ha dos formas de operar ante la perdida de conexion o cuando la sincronizacion esta en proceso
+- <span class="zf-color">slave-read-only</span> By default slaves are read-only. 
+- Useful for store some ephemeral datadata, slave will be easily deleted after resync with the master
+
+
+```
+slaveof 192.168.1.1 6379
+masterauth un-password-muy-complicado-y-largo
+slave-serve-stale-data enable
+slave-read-only yes
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Disk-backed<center>
+
+- <span class="zf-color">repl-diskless-sync </span> An RDB file is transmitted from the master to the slaves.
+ 
+Disk-backed
+- The Redis master creates a new process that writes the RDB
+file on disk. Later the file is transferred by the parent process
+- while the RDB file is generated, more slaves
+can be queued and served with the RDB file as soon as the current child producing
+the RDB file finishes its work
+
+```
+repl-diskless-sync no
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Diskless<center>
+
+<span style="color:red">Currently considered experimental</span>  
+Diskless
+- <span class="zf-color">repl-diskless-sync </span>
+- The Redis master creates a new process that directly writes the RDB file to slave sockets
+- The master waits a configurable amount of time (in seconds) before starting the 
+transfer in the hope that multiple slaves will arrive
+- With slow disks and fast (large bandwidth) networks
+
+```
+repl-diskless-sync yes
+```
+
+
+</script>
+</section>
+
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Diskless 2<center>
+
+- <span class="zf-color">repl-diskless-sync-delay </span> In seconds
+- Configure the delay the server waits in order to spawn the child that transfers the RDB via socket to the slaves.
+- To disable it entirely just set it to 0 seconds and the transfer will start ASAP.
+
+```
+repl-diskless-sync-delay 5
+```
+
+Note:
+- This is important since once the transfer starts, it is not possible to serve new slaves arriving, that will be queued for the next RDB transfer,
+so the server waits a delay in order to let more slaves arrive.
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Replication 1<center>
+
+- <span class="zf-color">repl-ping-slave-period </span> In seconds
+- Slaves send PINGs to server in a predefined interval
+
+```
+repl-ping-slave-period 10
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Replication 2<center>
+
+- <span class="zf-color">repl-timeout </span> In seconds, timeout for:
+	- Bulk transfer I/O during SYNC POV slave.
+	- Master timeout POV slaves (data, pings).
+	- Slave timeout POV masters (REPLCONF ACK pings).
+
+- MUST be greater than <span style="color:orange">repl-ping-slave-period</span> or a timeout will be detected
+in low traffic between the master and the slave.
+
+```
+repl-timeout 60
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Replication 3<center>
+
+- <span class="zf-color">repl-disable-tcp-nodelay </span> Disable TCP_NODELAY on the slave socket after SYNC
+- YES: Redis will use a smaller number of TCP packets and less bandwidth to send data to slaves. 
+- YES: add a delay of 40 for data to appear on the slave side, up to 40 milliseconds
+- NO: reduce the delay, but need more bandwidth for replication
+- By default is optimized for low latency
+
+```
+repl-disable-tcp-nodelay no
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Replication 4<center>
+
+- <span class="zf-color">repl-backlog-size </span> Set the replication backlog size
+- Buffer that accumulates slave data when slaves are disconnected for some time
+- The bigger the replication backlog, the longer the time the slave can be disconnected
+- The backlog is only allocated once there is at least a slave connected
+
+```
+repl-backlog-size 1mb
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Replication 5<center>
+
+- <span class="zf-color">repl-backlog-ttl </span> In seconds, backlog buffer to be freed
+After a master has no longer connected slaves
+- A value of 0 means to never release the backlog.
+
+```
+repl-backlog-ttl 3600
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Replication 6<center>
+
+- <span class="zf-color">slave-priority </span> Integer
+- Used by Redis Sentinel in order to select a slave to promote into a
+master if the master is no longer working correctly
+- low priority number is considered better
+- 0 marks the slave as not able to perform the role of master 
+
+```
+slave-priority 100
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Replication 7<center>
+
+It is possible for a master to stop accepting writes
+- <span class="zf-color">min-slaves-to-write </span> Integer
+- <span class="zf-color">min-slaves-max-lag </span> Seconds
+- The N slaves need to be in "online" state to white
+- The lag <= in seconds from the last ping received from the slave 
+- 0 disable.
+
+```
+min-slaves-to-write 0
+min-slaves-max-lag 10
+```
+
+
+</script>
+</section>
+</section>
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Master<center>
+
+Master
+
+```
+bind <youripaddress>
+requirepass <master-password>
+sudo /etc/init.d/redis-server restart
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Slave<center>
+
+Slave
+
+```
+bind <youripaddress>
+requirepass <slave-password>
+slaveof <masterip> <masterport>
+masterauth <master-password>
+service redis-server start
+```
+
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuration Testing<center>
+
+
+Master
+```
+redis-cli -h 10.0.3.61
+redis> AUTH <password>
+redis> SET replicated:test true
+```
+
+Slave
+```
+redis-cli -h 10.0.3.251
+redis> AUTH <password>
+redis> GET replicated:test
+```
+
+
+
+
+</script>
+</section>
+
+</section>
+
+
+
+
+<!-- *************** SLIDES REFERENCES *********************** -->
+<section data-markdown>
+<script type="text/template">
+
+</script>
+</section>
+<!-- *************** SLIDES END *********************** -->
+
+			</div>
+
+		</div>
+
+		<script src="../assets/vendor/reveal.js/lib/js/head.min.js"></script>
+		<script src="../assets/vendor/reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../assets/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../assets/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>

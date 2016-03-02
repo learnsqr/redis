@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>Redis Ready - Learnsqr</title>
+
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
+		<meta name="author" content="Agustín F. Calderón M.">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/reveal.css">
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/css/theme/moon.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="../assets/vendor/reveal.js/lib/css/zenburn.css">
+		
+		<link rel="stylesheet" href="../assets/css/style.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = '../assets/vendor/reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+		
+		<style type="text/css">
+            /* overrides */
+            /*body {
+                background: #040E27;
+                background: -moz-radial-gradient(center, circle cover, #555a5f 0%, #040E27 100%);
+                background: -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%, #555a5f), color-stop(100%, #040E27));
+                background: -webkit-radial-gradient(center, circle cover, #555a5f 0%, #040E27 100%);
+                background: -o-radial-gradient(center, circle cover, #555a5f 0%, #040E27 100%);
+                background: -ms-radial-gradient(center, circle cover, #555a5f 0%, #040E27 100%);
+                background: radial-gradient(center, circle cover, #555a5f 0%, #040E27 100%);
+                background-color: #040E27;
+            }*/
+
+            .zf-color {
+                color: #68B604;
+            }
+
+            .mysql-color {
+                color: #e97b00;
+            }
+
+            .doctrine-bg {
+                background-color: #040E27;
+            }
+
+            .reveal section img {
+                border: 0;
+                background: none;
+                box-shadow: 0 0 #000;
+            }
+
+            .reveal pre {
+                width: 100%;
+                font-size: 0.68em;
+            }
+
+            .reveal pre code {
+                max-height: 600px;
+            }
+        </style>
+        
+        
+	</head>
+
+	<body>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+	
+	<section>
+                    <h1>
+                        Hello!
+                    </h1>
+                </section>
+                <section>
+                    <h2>
+                        <a href="http://agustincl.github.com/" target="_blank" rel="me">Agustín F. Calderón M.</a>
+                    </h2>
+                </section>
+                <section>
+                    <img
+                        src="../assets/img/gh.svg"
+                        alt="Agustincl on Github"
+                        height="70px"
+                        style="margin: 15px;"
+                        />
+                    <img
+                        src="../assets/img/twitter.svg"
+                        alt="Agustincl on Twitter"
+                        height="65px"
+                        style="margin: 15px;"
+                    />
+                    <h2><a href="http://twitter.com/agustincl" target="_blank">Agustincl</a></h2>
+                </section>
+                
+
+<section data-markdown >
+<script type="text/template">
+
+## <span class="mysql-color">Presentations</span>
+Who, why, what...  
+
+Note: 
+http://redis.io/topics/whos-using-redis
+</script>
+</section>
+                
+                
+
+
+
+
+<section>
+    <h2>Questions?</h2>
+    <p>Send me a tweet <a href="https://twitter.com/agustincl" target="_blank">@Agustincl</a>!</p>
+</section>
+
+	
+<section data-markdown >
+<script type="text/template">
+
+<h1>
+                     <span class="mysql-color">REDIS Ready</span>
+                     <span class="zf-color"></span>
+                 </h1>
+                 <h1>
+                     <img
+                         src="../assets/img/redis-white.png"
+                         alt="PHP" border="0"
+                         height="100px"
+                         style="margin-bottom: -60px; "
+                     />                    
+                 </h1>     
+
+Note: 
+- http://redis.io/topics/whos-using-redis
+- http://techstacks.io/tech/redis
+- http://techstacks.io/
+</script>
+</section>
+
+			
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Que es REDIS<center>
+
+- Redis es un motor de base de datos en memoria, basado en el almacenamiento en tablas de hashes (clave/valor) 
+- Usada como una base de datos persistente.
+- Escrita en ANSI C por Salvatore Sanfilippo
+- Licencia BSD.
+- Patrocionios de VMWARE y Pivotal Software
+- REmote DIctionary Server
+- released in March 2009
+- built in order to scale http://lloogg.com/
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Caracteristicas de REDIS<center>
+
+- Estructura de datos del tabla de hashes, llave/valor en un índice en memoria 
+- El valor no este limitado al tipo string (String, sets, hashes)
+- Operaciones atomicas (escritura y lectura en la misma operacion)
+- Persistencia, NO MEMORIA VIRTUAL.
+- Replicación y Alta disponibilidad
+- transactions
+- Lua scripting
+- command line tool
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Caracteristicas de REDIS 2<center>
+
+- Redis es single threaded y corre es single process.
+Por ello utiliza muchos ficheros (open-files)
+- open source
+- "can handle up to 232 keys, and was tested in practice to handle at
+least 250 million of keys per instance."
+- most popular key-value store	
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Caracteristicas de REDIS 3<center>
+
+- Non-relational database management system
+- Did not expose the standard SQL interface
+- Does not conform to ACID
+- Working with a huge quantity of data
+- Does not require a relational model
+- Distributed, fault-tolerant architecture
+
+</script>
+</section>
+
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Caracteristicas de REDIS 4<center>
+ 
+Tipo de Database
+
+- Key-Value: Memcached, Redis, Riak
+- Column Family: Cassandra, HBase
+- Document: MongoDB, CouchDB
+- Graph: Neo4j, InfoGrid
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>When use REDIS<center>
+
+- Caching 
+- High-IO workloads
+- Data that expires
+- Cookie storage 
+- Analytics
+- Ad Targeting
+- Search engines
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Whos is using REDIS<center>
+
+- Twitter 
+- Instagram
+- Pinterest
+- Blizzard 
+- StackOverflow
+- GitHub
+- Craigslist
+
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Names in REDIS<center>
+
+- Redis *.rdb file is a binary representation of the in-memory store. 
+- This binary file is sufficient to completely restore Redis’ state.
+- The rdb file format is optimized for fast read and writes. 
+
+
+</script>
+</section>
+
+
+
+
+</section>
+             
+                
+
+<section>
+    <h2>Fork it!</h2>
+    <p>
+        You can find these slides on GitHub at<br/>
+        <a href="https://github.com/learnsqr/apification" target="_blank">
+            https://github.com/learnsqr/redis
+        </a>
+    </p>
+</section>
+
+<section>
+
+    <h2>Thanks for listening!</h2>
+    
+</section>
+
+
+
+
+</div>
+
+</div>
+
+		<script src="../assets/vendor/reveal.js/lib/js/head.min.js"></script>
+		<script src="../assets/vendor/reveal.js/js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: '../assets/vendor/reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: '../assets/vendor/reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: '../assets/vendor/reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: '../assets/vendor/reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
