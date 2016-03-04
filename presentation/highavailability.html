@@ -4,9 +4,9 @@
 	<head>
 		<meta charset="utf-8">
 
-		<title>Apification - Learnsqr</title>
+		<title>Redis Ready: High Disponibility - Learnsqr</title>
 
-		<meta name="description" content="Apification - A Talk about API's with PHP and ZF.">
+		<meta name="description" content="Redis Ready - A Talk about Redis.">
 		<meta name="author" content="Agustín F. Calderón M.">
 
 		<meta name="apple-mobile-web-app-capable" content="yes" />
@@ -50,624 +50,258 @@
 				
 				<section>
                     <h1>
-                        <span class="mysql-color">Conceptos Básicos.</span>
-                        <span class="zf-color">REST</span>
+                        <span class="mysql-color">High Availability</span>                        
                     </h1>
                 </section>
 <!-- *************** SLIDES BEGIN ********************* -->
 
-
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Qué es Rest?<center>
+## <center>Redis Sentinel<center>
 
-- Representational state transfer 
-- Una arquitectura
-- Centrado en la transmisibilidad de las representaciones de los recursos
-- Un recurso es cualquier concepto (cosas)
-- Una representación suele ser un documento que captura el estado actual o previsto de un recurso
-- Un cliente realiza peticiones a un servidor cuando quiere pasar a un nuevo estado
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Fortalezas<center>
-
-- Acoplamiento débil
-- Menos de mecanografía (contraejemplo: SOAP)
-- Énfasis en la legibilidad; utiliza sustantivos y verbos
-- HTTP métodos como verbos: GET, POST, PUT, DELETE, etc.
-- Recursos como sustantivos, y, además, colecciones
-</script>
-</section>
-
-
-<section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Richardson Maturity Model<center>
-
-http://martinfowler.com/articles/richardsonMaturityModel.html
+<span class="zf-color">Monitoring</span> Cnstantly checks if your master and slave instances are working as expected.  
+<span class="zf-color">Notification</span> Can notify the system administrator, another computer programs, via an API.  
+<span class="zf-color">Automatic failover</span> If a master is not working as expected, Sentinel can start a failover process.  
+<span class="zf-color">Configuration provider</span> Acts as a source of authority for clients service discovery.  
 
 </script>
 </section>
-
-
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Nivel 0: "El pantano de POX."<center>
+## <center>Execute</center>
 
-<img height="238" data-src="../assets/img/level0.png" alt="Down arrow">
-
-- Servicio que utiliza TCP para el transporte, principalmente como una forma de llamada a procedimiento remoto (RPC). 
-- La mayoría de los sistemas utilizarán HTTP POST para todas las interacciones.
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Nivel 1: "Recursos."<center>
-
-<img height="238" data-src="../assets/img/level1.png" alt="Down arrow">
-
-- Un servicio son múltiples "recursos", uno por objeto. 
-- Una URL distinta por cada objeto, cada uno tiene su propia identidad en la web 
-- El servicio puede ser todavía RPC en su naturaleza
-- Todavía está utilizando un único método HTTP.
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Nivel 2 "Los verbos HTTP."<center>
-
-<img height="238" data-src="../assets/img/level2.png" alt="Down arrow">
-
-- Verbos HTTP con nuestros servicios como estan la especificación HTTP
-- GET es para las operaciones seguras, y debe ser cacheable; 
-- POST se utiliza para la creación y/o actualización
-- DELETE se puede utilizar para eliminar un recurso
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Nivel 3 "Controles Hipermedia."<center>
-
-- Basándose en el nivel anterior, nuestras representaciones de recursos ahora también incluyen enlaces
-- Los enlaces indican lo que podemos hacer a continuación. 
-- Se vuelve casi autodescriptiva.
-
-</script>
-</section>
-
-</section>
-
-<section>
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center> Hypertext Application Language<center>
-
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center> Hypertext Application Language<center>
-
-- Describe cómo proporcionar hipermedia en JSON, 
-- Describe la forma de representar recursos incrustados
-- Las dos cosas que más necesitan estructura estandarizada en JSON. 
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Tipos de medios<center>
-
-- application/ hal+xml
-- application / hal+JSON. 
-- Se pueden usar como Content-Type, ya que describen la representación de la respuesta; 
-- El cliente puede solicitar simplemente application/json, y el formato de respuesta sigue siendo compatible.
-
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Links<center>
-
-- Todas las representaciones de recursos deben contener enlaces hipermedia
-- Todos los enlaces se proporcionan en un objeto "_links":
+-  It is mandatory to use a configuration file 
+-  Listening for connections to TCP port 26379
 ```
-{
-    "_links": {
-        "self": {"href": "http://example.com/api/status/1234"},
-        "conversation": [
-            {"href": "http://example.com/api/status/1237"},
-            {"href": "http://example.com/api/status/1241"}
-        ]
-    }
-}
-```
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Recursos<center>
-
-- HAL no impone ninguna estructura sobre otros recursos de requerir los enlaces hipermedia
-- Por lo general no incluyen los enlaces hipermedia al hacer una solicitud de servicio web
-- Los enlaces hipermedia se incluyen sólo en las representaciones devueltos por el servicio
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Recursos POST<center>
-
-```
-POST /api/status
-Host: example.com
-Accept: application/json
-Content-Type: application/json
-
-{
-    "status": "This is my awesome status update!",
-    "user": "mwop"
-}
+redis-server /path/to/sentinel.conf --sentinel
 ```
 
-</script>
-</section>
+</script></section>
 
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Recursos RESPONSE<center>
+## <center>Fundamentals</center>
+
+- You need at least <span class="zf-color">three Sentinel</span> instances for a robust deployment.
+- The Sentinel instances should be placed into machines that are believed to <span class="zf-color">fail in an independent way</span>.
+- Sentinel + Redis distributed system does <span class="zf-color">not guarantee</span> that acknowledged writes are retained during failures
+- You need Sentinel <span class="zf-color">support in your clients</span>. Popular client libraries have Sentinel support, but not all.
+- Sentinel, Docker, or other forms of NAT or Port Mapping should be <span class="zf-color">mixed with care</span>
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuring Sentinel 2</center>
+
+ 
+- <span class="zf-color">quorum</span> is the number of Sentinels that need to agree
+- <span class="zf-color">down-after-milliseconds</span> is the time in milliseconds an instance should not be reachable
+- <span class="zf-color">failover-timeout</span> if a Sentinel voted another Sentinel for the failover of a given master, it will wait some time to try to failover the same master again
+- <span class="zf-color">parallel-syncs</span> sets the number of slaves that can be reconfigured to use the new master after a failover at the same time
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Configuring Minimal</center>
 
 ```
-201 Created
-Location: http://example.com/api/status/1347
-Content-Type: application/hal+json
+sentinel monitor server1 127.0.0.1 6379 2
+sentinel down-after-milliseconds server1 60000
+sentinel failover-timeout server1 180000
+sentinel parallel-syncs server1 1
 
-{
-    "_links": {
-        "self": {"href": "http://example.com/api/status/1347"}
-    },
-    "id": "1347",
-    "timestamp": "2013-02-11 23:33:47",
-    "status": "This is my awesome status update!",
-    "user": "mwop"
-}
+sentinel monitor server2 192.168.1.3 6380 4
+sentinel down-after-milliseconds server2 10000
+sentinel failover-timeout server2 180000
+sentinel parallel-syncs server2 5
 ```
 
-</script>
-</section>
 
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Recursos embebidos<center>
+## <center>Commands</center>
 
-- Recursos incrustados están representados dentro de un objeto "_embedded" de la representación
-- Contienen sus propios "_links" también. 
-- Cada recurso se asigna a una propiedad de ese objeto
-- Si se devuelven varios objetos del mismo tipo, se le asigna en un array.
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Recursos embebidos<center>
-
+- num-other-sentinels
+- flags is just master (s_down or o_down)
+- num-slaves
 ```
-{
-    "_links": {
-        "self": {"href": "http://example.com/api/status/1347"}
-    },
-    "id": "1347",
-    "timestamp": "2013-02-11 23:33:47",
-    "status": "This is my awesome status update!",
-    "_embedded": {
-        "user": {
-            "_links": {
-                "self": {"href": "http://example.com/api/user/mwop"}
-            }
-            "id": "mwop",
-            "name": "Matthew Weier O'Phinney",
-            "url": "http://mwop.net"
-        }
-    }
-}
+SENTINEL master server1
+SENTINEL slaves server1
+SENTINEL sentinels server1
+SENTINEL get-master-addr-by-name mymaster
 ```
 
-</script>
-</section>
 
+</script></section>
 
+<!-- *************** SLIDES BEGIN ********************* -->
+
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Recursos embebidos collection<center>
+## <center>Testing the failover</center>
 
+Our master no longer reachable, sleeping for 30 seconds
+- Each Sentinel <span class="zf-color">detects</span> the master is down with an +sdown event.
+- This event is later <span class="zf-color">escalated to +odown</span>, which means that multiple Sentinels agree about the fact the master is not reachable.
+- <span class="zf-color">Sentinels vote a Sentinel</span> that will start the first failover attempt.
+- The <span class="zf-color">failover happens</span>.
 ```
-{
-    "_links": {
-        "self": {"href": "http://example.com/api/status"},
-        "next": {"href": "http://example.com/api/status?page=2"},
-        "last": {"href": "http://example.com/api/status?page=100"}
-    },
-    "count": 2973,
-    "per_page": 30,
-    "page": 1,
-    "_embedded": {
-        "status": [
-            {
-                "_links": {
-                    "self": {"href": "http://example.com/api/status/1347"}
-                },
-                "id": "1347",
-                "timestamp": "2013-02-11 23:33:47",
-                "status": "This is my awesome status update!",
-                "_embedded": {
-                    "user": {
-                        "_links": {
-                            "self": {"href": "http://example.com/api/user/mwop"}
-                        }
-                        "id": "mwop",
-                        "name": "Matthew Weier O'Phinney",
-                        "url": "http://mwop.net"
-                    }
-                }
-            }
-            /* ... */
-        ]
-    }
-}
+redis-cli -p 6379 DEBUG sleep 30
 ```
 
-</script>
-</section>
 
+</script></section>
 
-
-
-</section>
-
-
-
-<section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Restricciones de RESTful<center>
-</script>
-</section>
+## <center>Sentinel Features</center>
 
+- Sentinel commands (API)
+- Reconfiguring Sentinel at Runtime
+- Adding or removing Sentinels
+- Removing the old master or unreachable slaves.
+- Handling of -BUSY state
+- Slaves priority
+- Sentinel and Redis authentication
+- Sentinel clients implementation
+- Slaves auto discovery
+
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Cliente / Servidor<center>
+## <center>Sentinel Features</center>
 
-- Los clientes no tienen que ver con el _almacenamiento_, lo que les permite ser _portátil_.
-- Los servidores no tienen que ver con la _interfaz_ de usuario o el estado del usuario,
-permitiendo la _escalabilidad_.
-</script>
-</section>
+- Configuration propagation
+- Sentinel persistent state in configuration file
+- Redis Sentinel is heavily dependent on the computer time 
+for instance in order to understand if an instance is available it remembers the time of the latest successful reply to the PING command, 
+and compares it with the current time to understand how old it is.
 
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Sin-estado<center>
+## <center>Cluster</center>
 
-- No se almacena el contexto del cliente entre las peticiones.
-- Cada petición contiene toda la información necesaria.
-</script>
-</section>
+- Every Redis Cluster node requires two TCP connections open (TCP port used to serve clients and Cluster bus +10000)
+- Clients should never try to communicate with the cluster bus port
+- If you don't open both TCP ports, your cluster will not work as expected.
+- Currently Redis Cluster does not support NAT
 
 
+</script></section>
 
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Cacheable<center>
+## <center>Redis Cluster data sharding</center>
 
-- Las respuestas han de definirse como cacheables cuando corresponda. 
-- Los clientes deben respetar los encabezados HTTP con respecto al almacenamiento en caché.
-</script>
-</section>
+- Redis Cluster does not use consistent hashing
+- Different form of sharding where every key is conceptually part of what we call an <span class="zf-color">hash slot</span>
+- Every node in a Redis Cluster is responsible for a subset of the hash slots
+- There are 16384 hash slots in Redis Cluster
+- Adding and removing nodes, or changing the percentage of hash slots hold by nodes, does not require any downtime.
+- {foo}key and another{foo}key are guaranteed to be in the same hash slot
+
+Note: 
+HASH SLOT: CRC16 of the key modulo 16384.
 
 
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Sistema de capas<center>
+## <center>Redis Cluster master-slave model</center>
 
-- El cliente no debe preocuparse si está conectado directamente al servidor, o a un 
-intermediario.
-</script>
-</section>
+- Redis Cluster uses a master-slave model where every hash slot has from 1 (the master itself) to N replicas 
+- When the cluster is created we add a slave node to every master
+- However note that if nodes B and B1 fail at the same time Redis Cluster is not able to continue to operate.
 
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Codigo por demanda<center>
+## <center>Redis Cluster consistency</center>
 
-- Es opcional. 
-- Los servidores pueden extender o modificar la funcionalidad enviando código (ex. java applets, js, etc).
-</script>
-</section>
+<span style="color:red">Redis Cluster is not able to guarantee strong consistency</span>
 
+- Basically there is a trade-off to take between performance and consistency.
+
+Note:
+- The first reason why Redis Cluster can lose writes is because it uses asynchronous replication.
+- Your client writes to the master B.
+- The master B replies OK to your client.
+- The master B propagates the write to its slaves B1, B2 and B3.
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+
+
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>Interfaz uniforme<center>
+## <center>Cluster configuration</center>
 
-- Simplifica y desacopla la arquitectura.
-- Permite a cada parte evoluciona independientemente.
+<span class="zf-color">cluster-enabled <yes/no></span>  
+<span class="zf-color">cluster-config-file <filename></span> is not an user editable configuration file  
+<span class="zf-color">cluster-node-timeout <milliseconds></span> without it being considered as failing and will be failed over by its slaves.   
+<span class="zf-color">cluster-slave-validity-factor <factor></span> If set to zero, a slave will always try to failover a master, regardless of the amount of time the link between the master and the slave remained disconnected.   
+<span class="zf-color">cluster-migration-barrier <count></span> Minimum number of slaves a master will remain connected with  
+<span class="zf-color">cluster-require-full-coverage <yes/no></span>If yes, the cluster stops accepting writes if some percentage of the key space is not covered by any node.
 
-  - Identificación de los recursos, por ejemplo con la URI. el recurso como tal
-    esta separado de su representacion. 
-  - Manipulación de los recursos a través de representaciones, con datos suficientes
-	para borarlo o modificarlo
-  - Mensajes auto-descriptivos, que tienen suficiente información que describen como procesar el mensaje.
-  - Hipermedia as the engine of application state  (HATEOAS)
-</script>
-</section>
+</script></section>
 
+<!-- *************** SLIDES BEGIN ********************* -->
 <section data-markdown style="text-align: left;">
 <script type="text/template">
-## <center>HATEOAS<center>
+## <center>Minimal Redis cluster configuration</center>
 
-- Hipermedia como el motor del estado de la aplicación
-- Los clientes hacen transiciones solo con acciones identificadas por el servidor
-- El cliente no puede asumir que una accion particular esta disponible para un recurso particular
-  excepto para las descritar por el propio servidor en la representación anterior.
-</script>
-</section>
-
-</section>
-
-
-<!-- *************** SLIDES break *********************** -->
-
-<section data-markdown="slides/concepts/ContentNegotiation.md"></section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Aspectos principales de un RESTful<center>
-
-
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Negociación de contenido<center>
-
-- Analizar correctamente la solicitud
-	- Leer la cabecera Content-Type
-	- Retornar "415 Unsupported media type" si corresponde
-
-- Crear correctamente la respuesta
-	- Lea el encabezado Accept
-	- Establezca la cabecera Content-Type
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Hipermedia<center>
-
-- Media Type utilizado para una representación
-- Las relaciones entre representaciones y estados
-- Detectabilidad
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Hipermedia payloads<center>
-
-- Los enlaces deben ser plenamente cualificados: incluir esquema,
-servidor, y el puerto si es necesario
-- Con conjuntos paginados, incluir primero, último, siguiente, y previo
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>JSON y Hipermedia<center>
-
-- JSON no tiene una forma definida de proporcionar enlaces hipermedia
-- Opciones:
-	- "Link" header (enfoque GitHub)
-	- Application /collection + json
-	- Application / hal + json
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Link Header<center>
-
-- No es estandar aun.
+- The minimal cluster that works as expected requires to contain at least three master nodes.
+- But with three masters and three slaves better.
 ```
-Link: <url>; rel = "relation" [...]´
+port 7000
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 5000
+appendonly yes
 ```
-</script>
-</section>
+</script></section>
 
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Informe de errores<center>
-
-- HTTP de estado: 4xx, 5xx
-- No existen más datos!
-- Solución
-	- Application / api-problem + json
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Application / api-problem + json<center>
-
-Ver
-http://tools.ietf.org/html/draft-nottingham-http-problem-02
-
-```
-{
- "Describedby": "<url>",
- "Title": "título genérico de error de tipo",
- "HttpStatus": <código de estado>,
- "Detalle": "error específico mensaje detallando"
-}
-```
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Documentar la API<center>
-
-
-- ¿Qué operaciones están disponibles para un determinado recurso?
-- ¿Cómo son las representaciones?
-- ¿Cómo tengo que formar mi solicitud? 
-- ¿Qué modificadores pueden estar disponibles?
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>OPTIONS<center>
-
-
-- Responder a OPTIONS indicando los métodos HTTP permitidos a través de la cabecera Allow.
-- incluir Potencialmente información en el cuerpo HTTP.
-- http://zacstewart.com/2012/04/14/http-options-method.html
-- http://vimeo.com/49613738 ("Fun with OPTIONS "por D. Keith Casey at REST Fest 2012)
-
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>El uso de "describedby"<center>
-
-- Utilice un encabezado Link con una relación de enlace "describedby"
-apuntando a la documentación. 
-
-Ver
-http://www.mnot.net/blog/2012/10/29/NO_OPTIONS
-
-```
-Link: <http://status.dev/api/status/docs.md>; \
-rel = "describedby"
-```
-</script>
-</section>
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Error payloads<center>
-
-- Ser consistente
-- Proporcionar detalles
-- Application / api-problem + JSON es un buen estándar
-
-</script>
-</section>
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>API-Problem payloads<center>
-
-- Se requiere describedby. Si correspondiente a HTTP
-estado. 
-- http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html 
-  describir los códigos de estado HTTP.
-- Title requerido si corresponde a Estado HTTP
-- httpStatus no se requiere, pero se recomienda.
-- details proporcionar cualquier información adicional.
-
-</script>
-</section>
+<!-- *************** SLIDES BEGIN ********************* -->
 
 
 
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Review<center>
-
-- RESTO tiene un montón de pequeños detalles
-	- URI por recurso
-	- Métodos HTTP que indican las operaciones
-		disponible para un recurso
-	- Media Types que indican las representaciones 
-		de los resursos que gobiernan cómo analizar una petición
-		así como la forma para dar formato a una respuesta
-	- Hipermedia vincula la detectabilidad y cambios de estado disponibles
-
-</script>
-</section>
 
 
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Review 2<center>
-
-- Varias normas emergentes que rodean específicamente
-	REST JSON API
-- Colección + JSON
-- Idioma de la aplicación de hipertexto (HAL)
-- API-Problema
-
-</script>
-</section>
-
-
-
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Review 3<center>
-
-- ZF2 tiene un montón de características integradas para ayudar a construir RESTful
-	aplicaciones
-- AbstractRestfulController
-- Accept cabecera
-- Rich HTTP en general
-- Capa de vista flexible
-
-</script>
-</section>
-
-<section data-markdown>
-<script type="text/template">
-##RESTful Services
-
-<span class="ref">  
-* <sup>1</sup> Allen, Rob; O’Phinney, Matthew Weier. __"RESTful Services made easy with ZF2."__ January 2013.  [Restful services](http://akrabat.com/wp-content/uploads/PHPBNL13-Restful-services-made-easy-with-ZF2-Tutorial.pdf "Restful service.").
-<span>
-</script>
-</section>
 
 
 <!-- *************** SLIDES END *********************** -->
