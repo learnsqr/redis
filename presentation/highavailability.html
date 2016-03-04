@@ -298,8 +298,150 @@ appendonly yes
 
 <!-- *************** SLIDES BEGIN ********************* -->
 
+<section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>How to</center>
+
+```
+mkdir cluster-test
+cd cluster-test
+mkdir 7000 7001 7002 7003 7004 7005
+```
+</script></section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>How to 2</center>
+
+- Create a redis.conf file inside each of the directories
+- Replace the port number 7000 with the right port number
+- Copy your redis-server executable into cluster-test directory
+- Open 6 terminal tabs in your favorite terminal application.
+- Start instance with ../redis-server ./redis.conf
+- This ID will be used forever by this specific instance
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>How to 3</center>
+
+- To create the cluster writing some meaningful configuration to the nodes
+- Need redis-trib
+- The option --replicas 1 means that we want a   
+slave for every master created
+```
+gem install redis
+./redis-trib.rb create --replicas 1 127.0.0.1:7000 127.0.0.1:7001   
+127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005
+>[OK] All 16384 slots covered
+```
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>How to 4</center>
+
+Using Script
+```
+create-cluster start
+create-cluster create
+create-cluster stop
+```
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Resharding</center>
+
+Using redis-trib  
+- You only need to specify a single node
+```
+./redis-trib.rb reshard 127.0.0.1:7000
+./redis-trib.rb check 127.0.0.1:7000
+```
+
+Note: 
+- redis-cli -p 7000 cluster nodes | grep myself
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Testing the failover</center>
+
+We can identify a cluster and crash it with the following command
+```
+redis-cli -p 7000 cluster nodes | grep master
+redis-cli -p 7002 debug segfault
+redis-cli -p 7000 cluster nodes
+```
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Add Node</center>
+
+We can identify a cluster and crash it with the following command
+```
+./redis-trib.rb add-node 127.0.0.1:7006 127.0.0.1:7000
+```
+
+Or as a replica
+```
+./redis-trib.rb add-node --slave --master-id 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 127.0.0.1:7006 127.0.0.1:7000
+[manual] cluster replicate 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e
+```
 
 
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Removing Node</center>
+
+- To remove a master node it must be empty
+- If the master is not empty you need to reshard data away
+- An alternative to remove a master node is to perform a manual failover (CLUSTER FAILOVER)
+- To remove a slave node just use the del-node command of redis-trib:
+```
+./redis-trib del-node 127.0.0.1:7000 `<node-id>`
+```
+
+
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Replicas migration</center>
+
+- The cluster will try to migrate a replica from the master that has the greatest number of replicas in a given moment.
+- To benefit from replica migration you have just to add a few more replicas to a single master in your cluster, it does not matter what master.
+- There is a configuration parameter that controls the replica migration feature that is called cluster-migration-barrier
+```
+CLUSTER REPLICATE <master-node-id>
+```
+
+Note:
+Redis Cluster it is possible to reconfigure a slave to replicate with a different master
+
+
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+</section>
 
 
 
