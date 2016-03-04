@@ -419,13 +419,17 @@ Note:
 <script type="text/template">
 ## <center>VirtualMemory Tunning: overcommit <center>
 
-- <span class="zf-color">vm.overcommit_memory</span> Desabilitado, el sistema verifica que se tenga suficiente memoria para hacer backup del espacio virtual, 
-habilitado asume que hay memoria, y utiliza swap a disco.
+- <span class="zf-color">vm.overcommit_memory</span> Si esta desabilitado el sistema necesita suficiente memoria para duplicar las memory pages en el proceso child de persistencia.
+- Si esta habilitado, se utilizara SWAP a disco cuando se consuma la memoria (recomendado).
 
 ```
 sysctl vm.overcommit_memory
 ```
 
+Note:
+Este proceso child se lanza al necesitar persistencia, y las pages se duplican en memoria si hay cambio en el parent, lo que en teoria son todas la pages.
+- Si esta desahabilitado se necesita suficiente RAM para duplicar las pages.
+- Si esta habilitado, se utilizara SWAP a disco cuando se consuma la memoria.
 </script>
 </section>
 

@@ -73,30 +73,203 @@
 </script>
 </section>
 
-
+<!-- *************** SECTION BEGIN ********************* -->
+<section>
 <section data-markdown style="text-align: left;">
 <script type="text/template">
 ## <center>Strings<center>
 
 - Most basic kind of Redis value
 - Binary safe - can contain any kind of data
-- Max 512 Megabytes in length
-- Can be used as atomic counters using commands in the
-<span class="zf-color">INCR</span> family  
-<span class="zf-color">APPEND</span> – Append a value to a key  
-<span class="zf-color">GET</span> – Get the value of a key  
-<span class="zf-color">SET</span> – Set the string value of a key  
-<span class="zf-color">MGET</span> – Get the values of all the given keys MSET – Set multiple keys to multiple values  
+- Max 512 Megabytes in length  
+<span class="zf-color">INCR</span> Can be used as atomic counters   
+<span class="zf-color">APPEND</span> Append a value to a key  
+<span class="zf-color">GET</span> Get the value of a key  
+<span class="zf-color">SET</span> Set the string value of a key  
+<span class="zf-color">MGET</span> Get the values of all the given keys   
+<span class="zf-color">MSET</span> Set multiple keys to multiple values  
 
 </script>
 </section>
 
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Set & Get</center>
 
+<span class="zf-color">SET</span> / <span class="zf-color">GET</span> 
+```
+> set mykey somevalue
+OK
+> get mykey
+"somevalue"
+```
+</script></section>
+
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Set Options</center>
+
+<span class="zf-color">SET < options > </span>
+
+- EX seconds -- Set the specified expire time, in seconds.
+- PX milliseconds -- Set the specified expire time, in milliseconds.
+- NX -- Only set the key if it does not already exist.
+- XX -- Only set the key if it already exist.
+
+```
+> set mykey newval nx
+(nil)
+> set mykey newval xx
+OK
+```
+</script></section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Increments</center>
+
+<span class="zf-color">INCR</span> / <span class="zf-color">INCRBY</span>  
+<span class="zf-color">DECR</span> / <span class="zf-color">DECRBY</span>
+
+```
+> set counter 100
+OK
+> incr counter
+(integer) 101
+> incr counter
+(integer) 102
+> incrby counter 50
+(integer) 152
+```
+</script></section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Getset</center>
+
+<span class="zf-color">GETSET</span>
+```
+> SET mykey "Hello"
+OK
+> GETSET mykey "World"
+"Hello"
+> GET mykey
+"World" 
+```
+</script></section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Append</center>
+
+<span class="zf-color">APPEND</span>
+```
+> EXISTS mykey
+(integer) 0
+> APPEND mykey "Hello"
+(integer) 5
+> APPEND mykey " World"
+(integer) 11
+> GET mykey
+"Hello World"  
+```
+</script></section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Multiple Get/Set</center>
+
+<span class="zf-color">MSET</span> / <span class="zf-color">MGET</span> 
+```
+> mset a 10 b 20 c 30
+OK
+> mget a b c
+1) "10"
+2) "20"
+3) "30" 
+```
+</script></section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Delete</center>
+
+<span class="zf-color">DEL</span> 
+```
+> SET key1 "Hello"
+OK
+> SET key2 "World"
+OK
+> DEL key1 key2 key3
+(integer) 2 
+```
+</script></section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Type</center>
+
+<span class="zf-color">TYPE</span> 
+```
+> set mykey x
+OK
+> type mykey
+string
+> del mykey
+(integer) 1
+> type mykey
+none
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Time out for a key</center>
+
+<span class="zf-color">EXPIRE</span> / <span class="zf-color">PEXPIRE</span>  
+<span class="zf-color">TTL</span> / <span class="zf-color">PTTL</span> 
+```
+> set key some-value
+OK
+> expire key 5
+(integer) 1
+> get key (immediately)
+"some-value"
+> get key (after some time)
+(nil)
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Persist for a key</center>
+
+<span class="zf-color">PERSIST</span>    
+```
+> SET mykey "Hello"
+OK
+> EXPIRE mykey 10
+(integer) 1
+> TTL mykey
+(integer) 10
+> PERSIST mykey
+(integer) 1
+> TTL mykey
+(integer) -1 
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+
+
+</section>
+<!-- *************** SECTION END ********************* -->
+
+<section>
 <section data-markdown style="text-align: left;">
 <script type="text/template">
 ## <center>Lists<center>
 
-Lists
+Lists (Linked List)
 - Lists of strings, sorted by insertion order
 - Add elements to a Redis List pushing new elements on the
 head (on the left) or on the tail (on the right) of the list  
@@ -106,24 +279,233 @@ head (on the left) or on the tail (on the right) of the list
 <span class="zf-color">LINSERT</span> Insert an element before or after another element in a list  
 <span class="zf-color">LRANGE</span> Get a range of elements from a list LPOP – Remove and get the first element in a list RPOP – Remove and get the last element in a list  
 
+Note: 
+- This means that even if you have millions of elements inside a list, the operation of adding a new element in the head or in the tail of the list is performed in constant time. 
+- What's the downside? Accessing an element by index is very fast in lists implemented with an Array (constant time indexed access) and not so fast in lists implemented by linked 
+lists (where the operation requires an amount of work proportional to the index of the accessed element). 
+
 </script>
 </section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Push</center>
+
+<span class="zf-color">LPUSH</span> / <span class="zf-color">RPUSH</span>  
+<span class="zf-color">LRANGE</span>     
+```
+> rpush mylist A
+(integer) 1
+> rpush mylist B
+(integer) 2
+> lpush mylist first
+(integer) 3
+> lrange mylist 0 -1
+1) "first"
+2) "A"
+3) "B"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Push variadic command</center>
+
+Push multiple elements     
+```
+> rpush mylist 1 2 3 4 5 "foo bar"
+(integer) 9
+> lrange mylist 0 -1
+1) "first"
+2) "A"
+3) "B"
+4) "1"
+5) "2"
+6) "3"
+7) "4"
+8) "5"
+9) "foo bar"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Pop</center>
+
+<span class="zf-color">LPOP</span> / <span class="zf-color">RPOP</span>    
+```
+> rpush mylist a b c
+(integer) 3
+> rpop mylist
+"c"
+> rpop mylist
+"b"
+> rpop mylist
+"a"
+> rpop mylist
+(nil)
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Capped collection</center>
+
+<span class="zf-color">LTRIM</span>    
+```
+> rpush mylist 1 2 3 4 5
+(integer) 5
+> ltrim mylist 0 2
+OK
+> lrange mylist 0 -1
+1) "1"
+2) "2"
+3) "3"
+```
+
+Note: 
+- O(N) funcion de orden de complejidad, donde generalmente N es el numero de elementos. 
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Blocking operations on lists</center>
+
+Wait for elements (polling)  
+<span class="zf-color">BRPOP</span> / <span class="zf-color">BLPOP</span>    
+```
+> brpop tasks 5
+1) "tasks"
+2) "do_something"
+```
+
+Note: 
+- Wait for elements in the list tasks, but return if after 5 seconds no element is available
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>List rotation</center>
+
+Wait for elements  
+<span class="zf-color">RPOPLPUSH</span> / <span class="zf-color">BRPOPLPUSH</span>    
+```
+> RPUSH mylist "one"
+(integer) 1
+> RPUSH mylist "two"
+(integer) 2
+> RPUSH mylist "three"
+(integer) 3
+> RPOPLPUSH mylist myotherlist
+"three"
+> LRANGE mylist 0 -1
+1) "one"
+2) "two"
+> LRANGE myotherlist 0 -1
+1) "three"
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Circular list</center>
+
+Visit all the elements of an N-elements list  
+<span class="zf-color">RPOPLPUSH</span> / <span class="zf-color">BRPOPLPUSH</span>    
+```
+> RPUSH mylist "one"
+(integer) 1
+> RPUSH mylist "two"
+(integer) 2
+> RPUSH mylist "three"
+(integer) 3
+> RPOPLPUSH mylist mylist
+"three"
+> LRANGE mylist 0 -1
+1) "three"
+2) "one"
+3) "two"
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Automatic creation and removal of keys</center>
+
+- <span class="zf-color">Add an element to an aggregate</span> data type (Sets, Sorted Sets and Hashes), if the target key does not exist, 
+an <span style="color:orange">empty aggregate data type is created</span> before adding the element.
+- <span class="zf-color">Remove elements from an aggregate</span> data type, if the value remains empty, the key is <span style="color:orange">automatically destroyed</span>.
+- Calling a <span class="zf-color">read-only command such as LLEN, or a write command removing elements</span>, with an empty key, 
+always produces the same result as if the key is holding an <span style="color:orange">empty aggregate type of the type the command</span> expects to find.
 
 
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Automatic creation and removal of keys 2</center>
 
-<section data-markdown style="text-align: left;">
-<script type="text/template">
-## <center>Sets<center>
+Ex 1. 
+```
+> del mylist
+(integer) 1
+> lpush mylist 1 2 3
+(integer) 3
+```
+```
+> set foo bar
+OK
+> lpush foo 1 2 3
+(error) WRONGTYPE Operation against a key holding the wrong kind of value
+> type foo
+string
+```
 
-- Redis Sets are an unordered collection of Strings. 
-- You can track unique things using Redis Sets.    
-<span class="zf-color">SADD</span> Add one or more members to a set  
-<span class="zf-color">SISMEMBER</span> Determine if a given value is a member of a set SMEMBERS – Get all the members in a set  
-<span class="zf-color">SPOP</span> Remove and return a random member from a set SRANDMEMBER – Get one or multiple random members from a set  
-<span class="zf-color">SREM</span> Remove one or more members from a set  
-</script>
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Automatic creation and removal of keys 2</center>
+
+Ex 2. 
+```
+> lpush mylist 1 2 3
+(integer) 3
+> exists mylist
+(integer) 1
+> lpop mylist
+"3"
+> lpop mylist
+"2"
+> lpop mylist
+"1"
+> exists mylist
+(integer) 0
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Automatic creation and removal of keys 3</center>
+
+Ex 3. 
+```
+> del mylist
+(integer) 0
+> llen mylist
+(integer) 0
+> lpop mylist
+(nil)
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
 </section>
 
+<section>
 <section data-markdown style="text-align: left;">
 <script type="text/template">
 ## <center>Hashes<center>
@@ -140,19 +522,587 @@ head (on the left) or on the tail (on the right) of the list
 <span class="zf-color">HGETALL</span> Get all the fields and values in a hash  
 </script>
 </section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Field-Value pairs </center>
 
+<span class="zf-color">HSET</span> / <span class="zf-color">HMSET</span>  
+<span class="zf-color">HGET</span> / <span class="zf-color">HMGET</span>  
+<span class="zf-color">HGETALL</span>   
+```
+> hmset user:1000 username antirez birthyear 1977 verified 1
+OK
+> hget user:1000 username
+"antirez"
+> hget user:1000 birthyear
+"1977"
+> hgetall user:1000
+1) "username"
+2) "antirez"
+3) "birthyear"
+4) "1977"
+5) "verified"
+6) "1"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Increment field</center>
+
+<span class="zf-color">HINCRBY</span>   
+```
+> hincrby user:1000 birthyear 10
+(integer) 1987
+> hincrby user:1000 birthyear 10
+(integer) 1997
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Sets<center>
+
+- Redis Sets are an unordered collection of Strings. 
+- You can track unique things using Redis Sets.    
+<span class="zf-color">SADD</span> Add one or more members to a set  
+<span class="zf-color">SISMEMBER</span> Determine if a given value is a member of a set SMEMBERS – Get all the members in a set  
+<span class="zf-color">SPOP</span> Remove and return a random member from a set SRANDMEMBER – Get one or multiple random members from a set  
+<span class="zf-color">SREM</span> Remove one or more members from a set  
+
+Note:
+Sets are good for expressing relations between objects. For instance we can easily use sets in order to implement tags.
+
+</script>
+</section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Add</center>
+
+<span class="zf-color">SADD</span> / <span class="zf-color">SMEMBERS</span>  
+```
+> sadd myset 1 2 3
+(integer) 3
+> smembers myset
+1. 3
+2. 1
+3. 2
+```
+
+Note: 
+- Elements in any order at every call of smembers
+
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Membership</center>
+
+<span class="zf-color">SISMEMBER</span>  
+```
+> sismember myset 3
+(integer) 1
+> sismember myset 30
+(integer) 0
+```
+
+Note: 
+- elements in any order at every call of smembers
+
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Relations</center>
+ 
+If article ID 1000 is tagged with
+```
+> sadd news:1000:tags 1 2 5 77
+(integer) 4
+```
+
+Inverse relation 
+```
+> sadd tag:1:news 1000
+(integer) 1
+> sadd tag:2:news 1000
+(integer) 1
+> sadd tag:5:news 1000
+(integer) 1
+> sadd tag:77:news 1000
+(integer) 1
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Return Relations</center>
+ 
+All the tags for a given object
+```
+> smembers news:1000:tags
+1. 5
+2. 1
+3. 77
+4. 2
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Intersection</center>
+ 
+<span class="zf-color">SINTER</span> 
+```
+> SADD key1 "a"
+(integer) 1
+> SADD key1 "b"
+(integer) 1
+> SADD key1 "c"
+(integer) 1
+> SADD key2 "c"
+(integer) 1
+> SADD key2 "d"
+(integer) 1
+> SADD key2 "e"
+(integer) 1
+> SINTER key1 key2
+1) "c"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Union</center>
+ 
+<span class="zf-color">SUNION</span> 
+```
+> SADD key1 "a"
+(integer) 1
+> SADD key1 "b"
+(integer) 1
+> SADD key1 "c"
+(integer) 1
+> SADD key2 "c"
+(integer) 1
+> SADD key2 "d"
+(integer) 1
+> SUNION key1 key2
+1) "b"
+2) "a"
+3) "c"
+4) "d"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Difference</center>
+ 
+<span class="zf-color">SDIFF</span> 
+```
+> SADD key1 "a"
+(integer) 1
+> SADD key1 "b"
+(integer) 1
+> SADD key1 "c"
+(integer) 1
+> SADD key2 "c"
+(integer) 1
+> SADD key2 "d"
+(integer) 1
+> SADD key2 "e"
+(integer) 1
+> SDIFF key1 key2
+1) "b"
+2) "a"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Random Extract</center>
+ 
+<span class="zf-color">SPOP</span> / <span class="zf-color">SRANDMEMBER</span>
+```
+> SADD myset "one"
+(integer) 1
+> SADD myset "two"
+(integer) 1
+> SADD myset "three"
+(integer) 1
+> SPOP myset
+"one"
+> SMEMBERS myset
+1) "three"
+2) "two"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Store results</center>
+ 
+<span class="zf-color">SUNIONSTORE</span> / <span class="zf-color">SINTERSTORE</span> / <span class="zf-color">SDIFFSTORE</span> 
+```
+> SADD key1 "a"
+(integer) 1
+> SADD key1 "b"
+(integer) 1
+> SADD key1 "c"
+(integer) 1
+> SADD key2 "c"
+(integer) 1
+> SADD key2 "d"
+(integer) 1
+> SADD key2 "e"
+(integer) 1
+> SINTERSTORE key key1 key2
+(integer) 1
+> SMEMBERS key
+1) "c"
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Cardinality</center>
+ 
+<span class="zf-color">SCARD</span>  
+```
+> SADD myset "Hello"
+(integer) 1
+> SADD myset "World"
+(integer) 1
+> SCARD myset
+(integer) 2
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+</section>
+
+<section>
 <section data-markdown style="text-align: left;">
 <script type="text/template">
 ## <center>Sorted Sets<center>
 
-- Every member of a Sorted Set is associated with score, that is used in order to take the sorted set ordered, from the smallest to the greatest score
-- You can do a lot of tasks with great performance that are really hard to model in other kind of databases
+- Have unique elements
+- Every member is associated with score (float), that is used in order to take the sorted set ordered, from the smallest to the greatest score
 - Probably the most advanced Redis data type  
 <span class="zf-color">ZADD</span> Add one or more members to a sorted set, or update its score if it already exists  
 <span class="zf-color">ZREM</span> Remove one or more members from a sorted set   
 <span class="zf-color">ZRANGE</span> Return a range of members in a sorted set, by index   
 <span class="zf-color">ZINCRBY</span> Increment the score of a member in a sorted set   
 </script>
+</section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Insert</center>
+ 
+Variadic command  
+<span class="zf-color">ZADD</span>  
+```
+> ZADD hackers 1940 "Alan Kay"
+(integer) 1
+> ZADD hackers 1957 "Sophie Wilson"
+(integer) 1
+> ZADD hackers 1953 "Richard Stallman"
+(integer) 1
+> ZADD hackers 1949 "Anita Borg"
+(integer) 1
+```
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Get order</center>
+ 
+Already in order  
+<span class="zf-color">ZRANGE</span>  
+```
+> ZRANGE hackers 0 -1
+1) "Alan Turing"
+2) "Hedy Lamarr"
+3) "Claude Shannon"
+4) "Alan Kay"
+5) "Anita Borg"
+```
+
+Note:
+- 0 and -1 means from element index 0 to the last element 
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Get reverse order</center>
+  
+<span class="zf-color">ZREVRANGE</span>  
+```
+> ZREVRANGE hackers 0 -1
+5) "Anita Borg"
+6) "Alan Kay"
+7) "Claude Shannon"
+8) "Hedy Lamarr"
+9) "Alan Turing"
+```
+
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Get with scores</center>
+ 
+<span class="zf-color">WITHSCORES</span>  
+```
+ZRANGE hackers 0 -1 WITHSCORES
+1) "Alan Turing"
+2) "1912"
+3) "Hedy Lamarr"
+4) "1914"
+5) "Claude Shannon"
+6) "1916"
+7) "Alan Kay"
+8) "1940"
+9) "Anita Borg"
+10) "1949"
+```
+
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Get with ranges</center>
+ 
+Range both extremes are included
+<span class="zf-color">ZRANGEBYSCORE</span>  
+```
+> ZRANGEBYSCORE hackers -inf 1950
+1) "Alan Turing"
+2) "Hedy Lamarr"
+3) "Claude Shannon"
+4) "Alan Kay"
+5) "Anita Borg"
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Remove range</center>
+ 
+<span class="zf-color">ZREMRANGEBYSCORE</span>  
+```
+> ZREMRANGEBYSCORE hackers 1910 1920
+(integer) 3
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Position of element</center>
+ 
+<span class="zf-color">ZRANK</span> / <span class="zf-color">ZREVRANK</span>  
+```
+> ZRANK hackers "Anita Borg"
+(integer) 4
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Lexicographical scores</center>
+ 
+Elements inserted with the same identical score
+```
+> ZADD hackers 0 "Alan Kay" 0 "Sophie Wilson" 0 "Richard Stallman" 0
+  "Anita Borg" 0 "Yukihiro Matsumoto" 0 "Hedy Lamarr" 0 "Claude Shannon"
+  0 "Linus Torvalds" 0 "Alan Turing"
+> ZRANGE hackers 0 -1
+1) "Alan Kay"
+2) "Alan Turing"
+3) "Anita Borg"
+4) "Claude Shannon"
+5) "Hedy Lamarr"
+6) "Linus Torvalds"
+7) "Richard Stallman"
+8) "Sophie Wilson"
+9) "Yukihiro Matsumoto"
+```
+
+Note: 
+elements are compared with the C memcmp
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Ranges Intervals</center>
+ 
+- Valid start and stop must start with <span class="zf-color">(</span>  or <span class="zf-color">[</span> , 
+- Respectively exclusive or inclusive
+- Positively infinite <span class="zf-color">(+inf, +)</span> and negatively infinite <span class="zf-color">(-inf, -)</span>
+
+Return all the elements in the sorted set
+```
+> ZRANGEBYLEX myzset - + 
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Lexicographical range</center>
+ 
+<span class="zf-color">ZRANGEBYLEX</span> / <span class="zf-color">ZREVRANGEBYLEX</span>  
+```
+> ZRANGEBYLEX hackers [B [P
+1) "Claude Shannon"
+2) "Hedy Lamarr"
+3) "Linus Torvalds"
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Bitmaps<center>
+
+- Bitmaps are a set of bit-oriented operations defined on the String type. 
+
+<span class="zf-color">SETBIT</span> Sets or clears the bit at offset in the string value stored at key.  
+<span class="zf-color">GETBIT</span> Returns the bit value at offset in the string value stored at key.  
+<span class="zf-color">BITCOUNT</span> Count the number of set bits (population counting) in a string.  
+<span class="zf-color">BITPOS</span> Return the position of the first bit set to 1 or 0 in a string.
+   
+</script>
+</section>
+
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>Bitmaps 2<center>
+
+- Bit operations are divided into two groups: <span class="zf-color">constant-time</span> single bit operations, like setting a bit to 1 or 0, or getting its value, 
+and <span class="zf-color">operations on groups of bits</span>, for example counting the number of set bits in a given range of bits (e.g., population counting).
+- The biggest advantages is that they often provide <span class="zf-color">extreme space savings</span> when storing information. 
+- For example in a system where different users are represented by incremental user IDs, it is possible to remember a single bit information 
+(for example, knowing whether a user wants to receive a newsletter) of <span class="zf-color">4 billion of users using just 512 MB of memory</span>. 
+   
+</script>
+</section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Get / Set</center>
+ 
+<span class="zf-color">SETBIT</span> / <span class="zf-color">GETBIT </span>  
+```
+> SETBIT key 10 1
+(integer) 1
+> GETBIT key 10
+(integer) 1
+> GETBIT key 11
+(integer) 0
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Operate with byte ranges</center>
+ 
+Are able to operate with byte ranges of the string, instead of running for the whole length of the string  
+<span class="zf-color">BITPOS</span> / <span class="zf-color">BITCOUNT</span>  
+```
+> SETBIT key 0 1
+(integer) 0
+> SETBIT key 100 1
+(integer) 0
+> BITCOUNT key
+(integer) 2
+```
+
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+</section>
+
+<section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>HyperLogLogs or HLL<center>
+
+- Is a <span class="zf-color">probabilistic data structure</span> used in order to <span class="zf-color">count unique</span> things
+- Counting unique items requires using an <span class="zf-color">amount of memory</span> proportional to the number of items you want to count, 
+because you need to remember the elements you have already seen in the past in order to avoid counting them multiple times. 
+- However there is a <span class="zf-color">set of algorithms</span> that trade memory for precision: you end with an estimated measure with a standard error, 
+in the case of the Redis implementation, which is less than 1%.
+
+
+   
+</script>
+</section>
+<section data-markdown style="text-align: left;">
+<script type="text/template">
+## <center>HyperLogLogs 2<center>
+
+
+-  The magic of this algorithm is that you <span class="zf-color">no longer need to use an amount of memory proportional</span> to the number of items counted. 
+- Instead can use a <span class="zf-color">constant amount of memory!</span> 12k bytes in the worst case, or a lot less if your HyperLogLog has seen very few elements. 
+- Conceptually the HLL API is like using Sets to do the same task.
+
+   
+</script>
+</section>
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Add to the count</center>
+ 
+<span class="zf-color">PFADD</span>  
+```
+> PFADD hll a b c d e f g
+(integer) 1
+> PFCOUNT hll
+(integer) 7
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+<!-- *************** SLIDES BEGIN ********************* -->
+<section data-markdown style="text-align: left;"><script type="text/template">
+## <center>Approximated cardinality </center>
+ 
+<span class="zf-color">PFCOUNT</span>  
+```
+> PFADD hll foo bar zap
+(integer) 1
+> PFADD hll zap zap zap
+(integer) 0
+> PFADD hll foo bar
+(integer) 0
+> PFCOUNT hll
+(integer) 3
+> PFADD some-other-hll 1 2 3
+(integer) 1
+> PFCOUNT hll some-other-hll
+(integer) 6
+```
+
+</script></section>
+<!-- *************** SLIDES END ********************* -->
+
 </section>
 
 <!-- *************** SLIDES REFERENCES *********************** -->
